@@ -4,6 +4,8 @@ var router = express.Router();
 const User = require("../model/user");
 const passport = require('../config/passport');
 const upload = require('../config/multer');
+const fs = require('fs');
+const imgurUploader = require('imgur-uploader');
 
 
 // Bcrypt to encrypt passwords
@@ -41,14 +43,14 @@ console.log(req.body);
     profileInfo.image= `/upload/${req.file.filename}`;
   }
 
-  User.findByIdAndUpdate(req.params.id, userInfo , {new: true}, (err) => {
+  User.findByIdAndUpdate(req.params.id, userInfo , {new: true}, (err, user) => {
     if (err) {
       console.log("error");
       return res.send(err);
     }
 console.log("succes");
     return res.json({
-      message: 'User updated successfully'
+      user: user
     });
   });
 });
@@ -70,36 +72,24 @@ router.delete('/:id', (req, res) => {
 });
 
 
-router.post('/', upload.single('file'), function(req, res) {
+router.post('/edit', upload.single('file'), function(req, res) {
 
-  const user = new User({
-    username:       req.body.username,
-    password:       hashPass,
-    image: `/uploads/${req.file.filename}`,
-    name:           req.body.name,
-    lastName:       req.body.lastName,
-    age:            req.body.age,
-    height:         req.body.height,
-    weigth:         req.body.weigth,
-    mass_muscle:    req.body.mass_muscle,
-    mass_water:     req.body.mass_water,
-    mass_bone:      req.body.mass_bone,
-    mass_fat:       req.body.mass_fat,
-    count_total:    req.body.count_total,
-    count_variable: req.body.count_variable,
-  });
-
-  user.save((err) => {
-    if (err) {
-      return res.send(err);
-    }
-
-    return res.json({
-      message: 'New User created!',
-      user: User
+  const imageInfo ={};
+  //  console.log("HEEEERYYYYYYYYYY",req.file.path);
+  //  return res.json(user);
+  if(req.file !== undefined){
+    imgurUploader(fs.readFileSync(req.file.path)).then(data => {
+      console.log(data);
+      console.log("AQUIIIIIIII", data.link);
+      imageInfo.image=data.link;
+  User.findByIdAndUpdate(req.body.id, imageInfo,(err,user)=>{
+    if(err){return res.send(err);}
+    return res.json(user);
     });
   });
+}
 });
+
 
 
 
