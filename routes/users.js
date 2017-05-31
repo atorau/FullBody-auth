@@ -39,6 +39,14 @@ console.log(req.body);
 
   const userInfo= req.body;
 
+  if(userInfo.count_total >= 35 ){
+    userInfo.role = "REGULAR";
+  }
+
+  if(userInfo.count_total >= 100){
+    userInfo.role = "ADVANCED";
+  }
+
   if(req.file !== undefined){
     profileInfo.image= `/upload/${req.file.filename}`;
   }
@@ -75,13 +83,14 @@ router.delete('/:id', (req, res) => {
 router.post('/edit', upload.single('file'), function(req, res) {
 
   const imageInfo ={};
-  //  console.log("HEEEERYYYYYYYYYY",req.file.path);
+   console.log("HEEEERYYYYYYYYYY",req.file.path);
   //  return res.json(user);
   if(req.file !== undefined){
     imgurUploader(fs.readFileSync(req.file.path)).then(data => {
       console.log(data);
       console.log("AQUIIIIIIII", data.link);
       imageInfo.image=data.link;
+      console.log("AQUI TAMBIEN ENTRA", req.body.id);
   User.findByIdAndUpdate(req.body.id, imageInfo,(err,user)=>{
     if(err){return res.send(err);}
     return res.json(user);
