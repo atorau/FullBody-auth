@@ -30,7 +30,7 @@ router.post("/login", function(req, res) {
       bcrypt.compare(password, user.password, function(err, isMatch) {
         console.log(isMatch);
         if (!isMatch) {
-          res.status(401).json({message:"passwords did not match"});
+          res.status(200).json({message:"passwords did not match"});
         } else {
         	console.log('user', user);
           var payload = {id: user._id, user: user.username, role:user.role};
