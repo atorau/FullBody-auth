@@ -1,8 +1,10 @@
+require("dotenv").config();
 const mongoose = require('mongoose');
 const Exercise = require('../model/exercise');
 
 //Mongoose configuration
 mongoose.connect("mongodb://localhost:27017/FullBody");
+mongoose.connect(process.env.MONGODB_URI);
 
 
 const Exercises = [{

@@ -1,10 +1,12 @@
 'use strict';
+require("dotenv").config();
 
 const mongoose = require('mongoose');
 const dbName = 'FullBody';
 
 // connect to the database
-mongoose.connect(`mongodb://localhost/${dbName}`);
+// mongoose.connect(`mongodb://localhost/${dbName}`);
+mongoose.connect(process.env.MONGODB_URI);
 
 const db = mongoose.connection;
 
